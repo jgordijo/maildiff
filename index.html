@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Verificador de Emails</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dracula-prism/dist/css/dracula-prism.min.css" />
+  <style>
+    body {
+      background-color: #282a36;
+      color: #f8f8f2;
+      font-family: 'Fira Code', monospace;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    h1 {
+      text-align: center;
+      color: #bd93f9;
+    }
+    
+    .email-list-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    
+    .email-list-container label {
+      margin-bottom: 5px;
+    }
+    
+    .email-list-container textarea {
+      width: 300px;
+      height: 150px;
+      padding: 5px;
+      border: 1px solid #44475a;
+      background-color: #282a36;
+      color: #f8f8f2;
+      resize: vertical;
+    }
+    
+    button {
+      padding: 8px 16px;
+      background-color: #bd93f9;
+      color: #f8f8f2;
+      border: none;
+      cursor: pointer;
+    }
+    
+    button:hover {
+      background-color: #ca9bf7;
+    }
+    
+    .result-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+    
+    .result-label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .result-textarea {
+      width: 300px;
+      height: 150px;
+      padding: 5px;
+      border: 1px solid #44475a;
+      background-color: #282a36;
+      color: #f8f8f2;
+      resize: vertical;
+    }
+    
+    .copy-button {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Verificador de Emails</h1>
+  
+  <div class="email-list-container">
+    <label for="firstEmails">Lista de Emails (Esquerda):</label>
+    <textarea id="firstEmails"></textarea>
+  </div>
+  
+  <div class="email-list-container">
+    <label for="secondEmails">Lista de Emails (Direita):</label>
+    <textarea id="secondEmails"></textarea>
+  </div>
+  
+  <button onclick="generateMissingEmails()">Gerar Diferença</button>
+  
+  <div class="result-container">
+    <label class="result-label" for="missingEmails">Emails Ausentes:</label>
+    <textarea id="missingEmails" class="result-textarea" readonly></textarea>
+    <button class="copy-button" onclick="copyMissingEmails()">Copiar</button>
+  </div>
+  
+  <script>
+    function generateMissingEmails() {
+      const firstEmailList = document.getElementById('firstEmails').value
+        .split('\n')
+        .map(email => email.trim())
+        .filter(email => email !== '');
+      
+      const secondEmailList = document.getElementById('secondEmails').value
+        .split('\n')
+        .map(email => email.trim())
+        .filter(email => email !== '');
+      
+      const missingEmails = secondEmailList.filter(email => !firstEmailList.includes(email));
+      
+      document.getElementById('missingEmails').value = missingEmails.join('\n');
+    }
+    
+    function copyMissingEmails() {
+      const missingEmailsTextarea = document.getElementById('missingEmails');
+      missingEmailsTextarea.select();
+      document.execCommand('copy');
+      alert('Emails copiados para a área de transferência!');
+    }
+  </script>
+</body>
+</html>
