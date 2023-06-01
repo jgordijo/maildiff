@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Verificador de Emails</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dracula-prism/dist/css/dracula-prism.min.css" />
@@ -14,23 +15,24 @@
       flex-direction: column;
       align-items: center;
     }
-    
+
     h1 {
       text-align: center;
       color: #bd93f9;
     }
-    
+
     .email-list-container {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: flex-start;
       margin-bottom: 10px;
+      justify-content: space-between;
     }
-    
+
     .email-list-container label {
       margin-bottom: 5px;
     }
-    
+
     .email-list-container textarea {
       width: 300px;
       height: 150px;
@@ -40,7 +42,15 @@
       color: #f8f8f2;
       resize: vertical;
     }
-    
+
+    .count-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 10px;
+      color: #6272a4;
+    }
+
     button {
       padding: 8px 16px;
       background-color: #bd93f9;
@@ -48,23 +58,24 @@
       border: none;
       cursor: pointer;
     }
-    
+
     button:hover {
       background-color: #ca9bf7;
     }
-    
+
     .result-container {
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
       margin-top: 20px;
     }
-    
+
     .result-label {
       font-weight: bold;
       margin-bottom: 5px;
     }
-    
+
     .result-textarea {
       width: 300px;
       height: 150px;
@@ -74,84 +85,160 @@
       color: #f8f8f2;
       resize: vertical;
     }
-    
+
     .copy-button {
       margin-top: 10px;
     }
-    
+
     /* Estilos para layout responsivo */
-    
+
     @media (max-width: 600px) {
-      .email-list-container textarea,
+      .email-list-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .email-list-container textarea {
+        width: 100%;
+      }
+
+      .email-list-container:first-child {
+        margin-bottom: 20px;
+      }
+
+      .result-container {
+        width: 100%;
+        align-items: flex-start;
+      }
+
       .result-textarea {
         width: 100%;
       }
-      
+
       button {
         width: 100%;
       }
     }
+
+    @media (min-width: 601px) {
+      .email-list-container:first-child {
+        margin-right: 20px;
+      }
+
+      .result-container .result-textarea {
+        width: calc(50% - 10px);
+      }
+    }
   </style>
 </head>
+
 <body>
   <h1>Verificador de Emails</h1>
-  
+
   <div class="email-list-container">
     <label for="firstEmails">Lista de Emails (Esquerda):</label>
     <textarea id="firstEmails"></textarea>
+    <div class="count-container">
+      <span id="firstEmailsCount">Total: 0</span>
+    </div>
   </div>
-  
+
   <div class="email-list-container">
     <label for="secondEmails">Lista de Emails (Direita):</label>
     <textarea id="secondEmails"></textarea>
+    <div class="count-container">
+      <span id="secondEmailsCount">Total: 0</span>
+    </div>
   </div>
-  
+
   <button onclick="generateMissingEmails()">Gerar Diferença</button>
-  
+
   <div class="result-container">
-    <label class="result-label" for="missingEmailsLeft">Emails no Lado Esquerdo Ausentes no Lado Direito:</label>
-    <textarea id="missingEmailsLeft" class="result-textarea" readonly></textarea>
-    <button class="copy-button" onclick="copyMissingEmailsLeft()">Copiar</button>
+    <div>
+      <label class="result-label" for="missingEmailsLeft">Emails no Lado Esquerdo Ausentes no Lado Direito:</label>
+      <textarea id="missingEmailsLeft" class="result-textarea" readonly></textarea>
+      <button class="copy-button" onclick="copyMissingEmailsLeft()">Copiar</button>
+      <span id="missingEmailsLeftCount">Total: 0</span>
+    </div>
+
+    <div>
+      <label class="result-label" for="missingEmailsRight">Emails no Lado Direito Ausentes no Lado Esquerdo:</label>
+      <textarea id="missingEmailsRight" class="result-textarea" readonly></textarea>
+      <button class="copy-button" onclick="copyMissingEmailsRight()">Copiar</button>
+      <span id="missingEmailsRightCount">Total: 0</span>
+    </div>
   </div>
-  
-  <div class="result-container">
-    <label class="result-label" for="missingEmailsRight">Emails no Lado Direito Ausentes no Lado Esquerdo:</label>
-    <textarea id="missingEmailsRight" class="result-textarea" readonly></textarea>
-    <button class="copy-button" onclick="copyMissingEmailsRight()">Copiar</button>
-  </div>
-  
+
   <script>
     function generateMissingEmails() {
       const firstEmailList = document.getElementById('firstEmails').value
         .split('\n')
-        .map(email => email.trim())
+        .map(email => email.trim().toLowerCase())
         .filter(email => email !== '');
-      
+
       const secondEmailList = document.getElementById('secondEmails').value
         .split('\n')
-        .map(email => email.trim())
+        .map(email => email.trim().toLowerCase())
         .filter(email => email !== '');
-      
+
       const missingEmailsLeft = secondEmailList.filter(email => !firstEmailList.includes(email));
       const missingEmailsRight = firstEmailList.filter(email => !secondEmailList.includes(email));
-      
+
       document.getElementById('missingEmailsLeft').value = missingEmailsLeft.join('\n');
       document.getElementById('missingEmailsRight').value = missingEmailsRight.join('\n');
+
+      document.getElementById('missingEmailsLeftCount').textContent = `Total: ${missingEmailsLeft.length}`;
+      document.getElementById('missingEmailsRightCount').textContent = `Total: ${missingEmailsRight.length}`;
     }
-    
+
+    const firstEmailList = document.getElementById('firstEmails').value
+      .split('\n')
+      .map(email => email.trim().toLowerCase())
+      .filter(email => email !== '');
+
+    const secondEmailList = document.getElementById('secondEmails').value
+      .split('\n')
+      .map(email => email.trim().toLowerCase())
+      .filter(email => email !== '');
+
+    const missingEmailsLeft = secondEmailList.filter(email => !firstEmailList.includes(email));
+    const missingEmailsRight = firstEmailList.filter(email => !secondEmailList.includes(email));
+
+    document.getElementById('missingEmailsLeft').value = missingEmailsLeft.join('\n');
+    document.getElementById('missingEmailsRight').value = missingEmailsRight.join('\n');
+
     function copyMissingEmailsLeft() {
       const missingEmailsTextarea = document.getElementById('missingEmailsLeft');
       missingEmailsTextarea.select();
       document.execCommand('copy');
       alert('Emails copiados para a área de transferência!');
     }
-    
+
     function copyMissingEmailsRight() {
       const missingEmailsTextarea = document.getElementById('missingEmailsRight');
       missingEmailsTextarea.select();
       document.execCommand('copy');
       alert('Emails copiados para a área de transferência!');
     }
+
+    function updateEmailsCount() {
+      const firstEmailList = document.getElementById('firstEmails').value
+        .split('\n')
+        .map(email => email.trim().toLowerCase())
+        .filter(email => email !== '');
+
+      const secondEmailList = document.getElementById('secondEmails').value
+        .split('\n')
+        .map(email => email.trim().toLowerCase())
+        .filter(email => email !== '');
+
+      document.getElementById('firstEmailsCount').textContent = `Total: ${firstEmailList.length}`;
+      document.getElementById('secondEmailsCount').textContent = `Total: ${secondEmailList.length}`;
+    }
+
+    document.getElementById('firstEmails').addEventListener('input', updateEmailsCount);
+    document.getElementById('secondEmails').addEventListener('input', updateEmailsCount);
   </script>
 </body>
+
 </html>
