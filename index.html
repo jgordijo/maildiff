@@ -78,6 +78,19 @@
     .copy-button {
       margin-top: 10px;
     }
+    
+    /* Estilos para layout responsivo */
+    
+    @media (max-width: 600px) {
+      .email-list-container textarea,
+      .result-textarea {
+        width: 100%;
+      }
+      
+      button {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -96,9 +109,15 @@
   <button onclick="generateMissingEmails()">Gerar Diferença</button>
   
   <div class="result-container">
-    <label class="result-label" for="missingEmails">Emails Ausentes:</label>
-    <textarea id="missingEmails" class="result-textarea" readonly></textarea>
-    <button class="copy-button" onclick="copyMissingEmails()">Copiar</button>
+    <label class="result-label" for="missingEmailsLeft">Emails no Lado Esquerdo Ausentes no Lado Direito:</label>
+    <textarea id="missingEmailsLeft" class="result-textarea" readonly></textarea>
+    <button class="copy-button" onclick="copyMissingEmailsLeft()">Copiar</button>
+  </div>
+  
+  <div class="result-container">
+    <label class="result-label" for="missingEmailsRight">Emails no Lado Direito Ausentes no Lado Esquerdo:</label>
+    <textarea id="missingEmailsRight" class="result-textarea" readonly></textarea>
+    <button class="copy-button" onclick="copyMissingEmailsRight()">Copiar</button>
   </div>
   
   <script>
@@ -113,13 +132,22 @@
         .map(email => email.trim())
         .filter(email => email !== '');
       
-      const missingEmails = secondEmailList.filter(email => !firstEmailList.includes(email));
+      const missingEmailsLeft = secondEmailList.filter(email => !firstEmailList.includes(email));
+      const missingEmailsRight = firstEmailList.filter(email => !secondEmailList.includes(email));
       
-      document.getElementById('missingEmails').value = missingEmails.join('\n');
+      document.getElementById('missingEmailsLeft').value = missingEmailsLeft.join('\n');
+      document.getElementById('missingEmailsRight').value = missingEmailsRight.join('\n');
     }
     
-    function copyMissingEmails() {
-      const missingEmailsTextarea = document.getElementById('missingEmails');
+    function copyMissingEmailsLeft() {
+      const missingEmailsTextarea = document.getElementById('missingEmailsLeft');
+      missingEmailsTextarea.select();
+      document.execCommand('copy');
+      alert('Emails copiados para a área de transferência!');
+    }
+    
+    function copyMissingEmailsRight() {
+      const missingEmailsTextarea = document.getElementById('missingEmailsRight');
       missingEmailsTextarea.select();
       document.execCommand('copy');
       alert('Emails copiados para a área de transferência!');
